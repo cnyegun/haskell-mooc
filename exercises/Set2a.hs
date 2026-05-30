@@ -66,7 +66,9 @@ updateAt n x (y:ys) = y:updateAt (n - 1) x ys
 --   substring 0 4 "abcdefgh"  ==>  "abcd"
 
 substring :: Int -> Int -> String -> String
-substring i j s = todo
+substring _ 0 _ = "" 
+substring 0 j xs = take j xs
+substring i j (_:rest) = substring (i - 1) (j - 1) rest
 
 ------------------------------------------------------------------------------
 -- Ex 5: check if a string is a palindrome. A palindrome is a string
@@ -81,7 +83,7 @@ substring i j s = todo
 --   isPalindrome "AB"       ==>  False
 
 isPalindrome :: String -> Bool
-isPalindrome str = todo
+isPalindrome str = reverse str == str
 
 ------------------------------------------------------------------------------
 -- Ex 6: implement the function palindromify that chops a character
@@ -95,7 +97,11 @@ isPalindrome str = todo
 --   palindromify "abracacabra" ==> "acaca"
 
 palindromify :: String -> String
-palindromify s = todo
+palindromify s@[] = s
+palindromify s@[_] = s
+palindromify s
+  | isPalindrome s = s
+  | otherwise = palindromify (init (tail s))
 
 ------------------------------------------------------------------------------
 -- Ex 7: implement safe integer division, that is, a function that
@@ -108,7 +114,9 @@ palindromify s = todo
 --   safeDiv 4 0  ==> Nothing
 
 safeDiv :: Integer -> Integer -> Maybe Integer
-safeDiv x y = todo
+safeDiv x y
+  | y == 0 = Nothing
+  | otherwise = Just (x `div` y)
 
 ------------------------------------------------------------------------------
 -- Ex 8: implement a function greet that greets a person given a first
@@ -120,7 +128,8 @@ safeDiv x y = todo
 --   greet "John" (Just "Smith")  ==> "Hello, John Smith!"
 
 greet :: String -> Maybe String -> String
-greet first last = todo
+greet first Nothing = "Hello, " ++ first ++ "!"
+greet first (Just lastname) = "Hello, " ++ first ++ " " ++ lastname ++ "!"
 
 ------------------------------------------------------------------------------
 -- Ex 9: safe list indexing. Define a function safeIndex so that
@@ -136,7 +145,9 @@ greet first last = todo
 --   safeIndex ["a","b","c"] (-1)  ==> Nothing
 
 safeIndex :: [a] -> Int -> Maybe a
-safeIndex xs i = todo
+safeIndex [] _ = Nothing
+safeIndex (x:xs) 0 = Just x
+safeIndex (_:xs) i = safeIndex xs (i - 1)
 
 ------------------------------------------------------------------------------
 -- Ex 10: another variant of safe division. This time you should use
@@ -147,7 +158,8 @@ safeIndex xs i = todo
 --   eitherDiv 4 0   ==> Left "4/0"
 
 eitherDiv :: Integer -> Integer -> Either String Integer
-eitherDiv x y = todo
+eitherDiv x 0 = Left (show x ++ "/0")
+eitherDiv x y = Right (x `div` y)
 
 ------------------------------------------------------------------------------
 -- Ex 11: implement the function addEithers, which combines two values of type
@@ -164,4 +176,6 @@ eitherDiv x y = todo
 --   addEithers (Left "boom") (Left "fail") ==> Left "boom"
 
 addEithers :: Either String Int -> Either String Int -> Either String Int
-addEithers a b = todo
+addEithers (Left a) _ = Left a
+addEithers _ (Left b) = Left b
+addEithers (Right a) (Right b) = Right (a + b)
